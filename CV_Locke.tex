@@ -1,0 +1,605 @@
+
+\documentclass[10pt]{article}
+\usepackage{calc}
+\usepackage{graphicx}
+\reversemarginpar
+\usepackage{comment}
+%\usepackage[monochrome]{color}
+\usepackage[paper=letterpaper,
+            %includefoot, % Uncomment to put page number above margin
+            marginparwidth=1.2in,     % Length of section titles
+            marginparsep=.05in,       % Space between titles and text
+            margin=1in,               % 1 inch margins
+            includemp]{geometry}
+
+%% Use these lines for A4-sized paper
+%\usepackage[paper=a4paper,
+%            %includefoot, % Uncomment to put page number above margin
+%            marginparwidth=30.5mm,    % Length of section titles
+%            marginparsep=1.5mm,       % Space between titles and text
+%            margin=25mm,              % 25mm margins
+%            includemp]{geometry}
+
+
+\setlength{\parindent}{0in}
+
+\usepackage[shortlabels]{enumitem}
+
+
+
+\makeatletter
+\newlength{\bibhang}
+\setlength{\bibhang}{1em}
+\newlength{\bibsep}
+ {\@listi \global\bibsep\itemsep \global\advance\bibsep by\parsep}
+\newlist{bibsection}{itemize}{3}
+\setlist[bibsection]{label=,leftmargin=\bibhang}
+\newlist{bibenum}{enumerate}{3}
+\setlist[bibenum]{resume,label=[\arabic*],leftmargin={\bibhang+\widthof{[999]}}}
+\setlist*[bibsection,bibenum]{%
+        itemindent=-\bibhang,
+        itemsep=\bibsep,parsep=\z@,partopsep=0pt,
+        topsep=0pt}
+\let\oldendbibenum\endbibenum
+\def\endbibenum{\oldendbibenum\vspace{-.6\baselineskip}}
+\let\oldendbibsection\endbibsection
+\def\endbibsection{\oldendbibsection\vspace{-.6\baselineskip}}
+\makeatother
+
+%% Reference the last page in the page number
+%
+% NOTE: comment the +LP line and uncomment the -LP line to have page
+%       numbers without the ``of ##'' last page reference)
+%
+% NOTE: uncomment the \pagestyle{empty} line to get rid of all page
+%       numbers (make sure includefoot is commented out above)
+%
+\usepackage{fancyhdr,lastpage}
+\pagestyle{fancy}
+%\pagestyle{empty}      % Uncomment this to get rid of page numbers
+\fancyhf{}\renewcommand{\headrulewidth}{0pt}
+\fancyfootoffset{\marginparsep+\marginparwidth}
+\newlength{\footpageshift}
+\setlength{\footpageshift}
+          {0.5\textwidth+0.5\marginparsep+0.5\marginparwidth-2in}
+\lfoot{\hspace{\footpageshift}%
+       \parbox{4in}{\, \hfill %
+                    \arabic{page} of \protect\pageref*{LastPage} % +LP
+%                    \arabic{page}                               % -LP
+                    \hfill \,}}
+
+% Finally, give us PDF bookmarks
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,  
+    urlcolor=blue
+    }
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%% End Document Setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% Helper Commands %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%% HEADING AT TOP OF CURRICULUM VITAE
+
+% The title (name) with a horizontal rule under it
+% (optional argument typesets an object right-justified across from name
+%  as well)
+%
+% Usage: \makeheading{name}
+%        OR
+%        \makeheading[right_object]{name}
+%
+% Place at top of document. It should be the first thing.
+% If ``right_object'' is provided in the square-braced optional
+% argument, it will be right justified on the same line as ``name'' at
+% the top of the CV. For example:
+%
+%       \makeheading[\emph{Curriculum vitae}]{Your Name}
+%
+% will put an emphasized ``Curriculum vitae'' at the top of the document
+% as a title. Likewise, a picture could be included:
+%
+%   \makeheading[\includegraphics[height=1.5in]{my_picutre}]{Your Name}
+%
+% the picture will be flush right across from the name.
+\newcommand{\makeheading}[2][]%
+        {\hspace*{-\marginparsep minus \marginparwidth}%
+         \begin{minipage}[t]{\textwidth+\marginparwidth+\marginparsep}%
+             {\large \bfseries #2 \hfill #1}\\[-0.15\baselineskip]%
+                 \rule{\columnwidth}{1pt}%
+         \end{minipage}}
+
+%%% SECTION HEADINGS
+
+% The section headings. Flush left in small caps down pseudo-margin.
+%
+% Usage: \section{section name}
+\renewcommand{\section}[1]{\pagebreak[3]%
+    \hyphenpenalty=10000%
+    \vspace{1.3\baselineskip}%
+    \phantomsection\addcontentsline{toc}{section}{#1}%
+    \noindent\llap{\scshape\smash{\parbox[t]{\marginparwidth}{\raggedright #1}}}%
+    \vspace{-\baselineskip}\par}
+
+%%% LISTS
+
+% This macro alters a list by removing some of the space that follows the list
+% (is used by lists below)
+\newcommand*\fixendlist[1]{%
+    \expandafter\let\csname preFixEndListend#1\expandafter\endcsname\csname end#1\endcsname
+    \expandafter\def\csname end#1\endcsname{\csname preFixEndListend#1\endcsname\vspace{-0.6\baselineskip}}}
+
+% These macros help ensure that items in outer-type lists do not get
+% separated from the next line by a page break
+% (they are used by lists below)
+\let\originalItem\item
+\newcommand*\fixouterlist[1]{%
+    \expandafter\let\csname preFixOuterList#1\expandafter\endcsname\csname #1\endcsname
+    \expandafter\def\csname #1\endcsname{\csname preFixOuterList#1\endcsname\let\oldItem\item\def\item{\pagebreak[2]\oldItem}}
+    \expandafter\let\csname preFixOuterListend#1\expandafter\endcsname\csname end#1\endcsname
+    \expandafter\def\csname end#1\endcsname{\let\item\oldItem\csname preFixOuterListend#1\endcsname}}
+\newcommand*\fixinnerlist[1]{%
+    \expandafter\let\csname preFixInnerList#1\expandafter\endcsname\csname #1\endcsname
+    \expandafter\def\csname #1\endcsname{\let\oldItem\item\let\item\originalItem\csname preFixInnerList#1\endcsname}
+    \expandafter\let\csname preFixInnerListend#1\expandafter\endcsname\csname end#1\endcsname
+    \expandafter\def\csname end#1\endcsname{\csname preFixInnerListend#1\endcsname\let\item\oldItem}}
+
+% An itemize-style list with lots of space between items
+%
+% Usage:
+%   \begin{outerlist}
+%       \item ...    % (or \item[] for no bullet)
+%   \end{outerlist}
+\newlist{outerlist}{itemize}{3}
+    \setlist[outerlist]{label=\enskip\textbullet,leftmargin=*}
+    \fixendlist{outerlist}
+    \fixouterlist{outerlist}
+
+% An environment IDENTICAL to outerlist that has better pre-list spacing
+% when used as the first thing in a \section
+%
+% Usage:
+%   \begin{lonelist}
+%       \item ...    % (or \item[] for no bullet)
+%   \end{lonelist}
+\newlist{lonelist}{itemize}{3}
+    \setlist[lonelist]{label=\enskip\textbullet,leftmargin=*,partopsep=0pt,topsep=0pt}
+    \fixendlist{lonelist}
+    \fixouterlist{lonelist}
+
+% An itemize-style list with little space between items
+%
+% Usage:
+%   \begin{innerlist}
+%       \item ...    % (or \item[] for no bullet)
+%   \end{innerlist}
+\newlist{innerlist}{itemize}{3}
+    \setlist[innerlist]{label=\enskip\textbullet,leftmargin=*,parsep=0pt,itemsep=0pt,topsep=0pt,partopsep=0pt}
+    \fixinnerlist{innerlist}
+
+% An environment IDENTICAL to innerlist that has better pre-list spacing
+% when used as the first thing in a \section
+%
+% Usage:
+%   \begin{loneinnerlist}
+%       \item ...    % (or \item[] for no bullet)
+%   \end{loneinnerlist}
+\newlist{loneinnerlist}{itemize}{3}
+    \setlist[loneinnerlist]{label=\enskip\textbullet,leftmargin=*,parsep=0pt,itemsep=0pt,topsep=0pt,partopsep=0pt}
+    \fixendlist{loneinnerlist}
+    \fixinnerlist{loneinnerlist}
+
+%%% EXTRA SPACE
+
+% To add some paragraph space between lines.
+% This also tells LaTeX to preferably break a page on one of these gaps
+% if there is a needed pagebreak nearby.
+\newcommand{\blankline}{\quad\pagebreak[3]}
+\newcommand{\halfblankline}{\quad\vspace{-0.5\baselineskip}\pagebreak[3]}
+
+%%% FORMATTING MACROS
+
+% Uses hyperref to link DOI
+\newcommand\doilink[1]{\href{http://dx.doi.org/#1}{#1}}
+\newcommand\doi[1]{doi:\doilink{#1}}
+
+% For \url{SOME_URL}, links SOME_URL to the url SOME_URL
+\providecommand*\url[1]{\href{#1}{#1}}
+% Same as above, but pretty-prints SOME_URL in teletype fixed-width font
+\renewcommand*\url[1]{\href{#1}{\texttt{#1}}}
+
+% For \email{ADDRESS}, links ADDRESS to the url mailto:ADDRESS
+\providecommand*\email[1]{\href{mailto:#1}{#1}}
+% Same as above, but pretty-prints ADDRESS in teletype fixed-width font
+%\renewcommand*\email[1]{\href{mailto:#1}{\texttt{#1}}}
+
+%\providecommand\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+%    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+%\providecommand\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+%    \TeX}}
+\providecommand\BibTeX{{B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    \TeX}}
+\providecommand\Matlab{\textsc{Matlab}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%% End Helper Commands 
+
+%%%%%%%%%%%%%%%%%%%%%%%%% Begin CV Document 
+
+
+
+\begin{document}
+\makeheading[\emph{Curriculum Vitae} {April 2025}]{Stephen L. Locke, Ph.D.}
+
+\section{Contact Information}
+
+% NOTE: Mind where the & separators and \\ breaks are in the following
+%       table. Table is one row made up of three parboxes. The left
+%       parbox has address info, the middle parbox has a vertical bar,
+%       and the right parbox has phone and electronic contact
+%       information.
+%
+% MACROS: \rcollength is the width of the right column of the table
+%             (adjust it to your liking; default is 1.85in).
+%         \spacewidth is width of area between left and right boxes.
+%         \spacechar is character used to produce perforated vertical
+%             boundary between boxes.
+%
+\newlength{\rcollength}\setlength{\rcollength}{2.6in}%
+% 		\newlength{\spacewidth}\setlength{\spacewidth}{20pt}
+% 		\newcommand\spacechar{$|$}
+%
+%\begin{tabular}[t]{@{}p{\textwidth-\rcollength-\spacewidth}@{}p{\spacewidth}@{}p{\rcollength}}%
+
+%\begin{tabular}[t]{@{}p{\textwidth-\rcollength}p{\rcollength}}
+\begin{tabular}{l | l}
+\href{http://www.wku.edu/economics/}{Department of Economics} 	& 
+E-mail: \email{stephen.locke@wku.edu} \\
+Western Kentucky University &  Website: \href{http://people.wku.edu/stephen.locke}{http://people.wku.edu/stephen.locke} \\
+1906 College Heights Blvd. \#11059 & \\
+Bowling Green, KY 42101-1059  							& 
+\end{tabular}
+
+
+\section{Personal} Date of Birth: June 24, 1986 \\ Citizenship: United States  \\ Hometown: Hardyville,  KY
+
+\section{Academic Employment} 
+\begin{itemize}
+\item August 2021 - \\ Associate Professor  \\ Western Kentucky University \\ Department of Economics
+    \begin{itemize}
+        \item August 2023 - \\
+        Director of the Actuarial Science Concentration of the Mathematical Economics Major
+    \end{itemize}
+\item August 2015-July 2021 \\ Assistant Professor \\ Western Kentucky University \\  Department of Economics 
+\item September 2013 - July 2015 \\ Postdoctoral Scholar \\ University of California Los Angeles \\ Institute of the Environment and Sustainability 
+\end{itemize}
+
+
+\section{Education}
+%
+\href{http://gatton.uky.edu/faculty-research/departments/economics}{\textbf{University of Kentucky}}, Lexington, KY
+\begin{outerlist}
+	\item[] Ph.D., Economics, August 2013 
+	\item[] M.S., Economics, December 2010 
+\end{outerlist} 
+
+\medskip
+
+\href{http://www.wku.edu/economics//}{\textbf{Western Kentucky University}}, Bowling Green, KY
+\begin{outerlist}
+\item[] B.A. Economics, \emph{Summa Cum Laude}, December 2008
+     \begin{innerlist}
+      \item Minors in Mathematics and Business Administration               
+      \end{innerlist}
+\end{outerlist}
+
+\section{Research Interests}
+Real estate brokerage, hedonic property value models, electric vehicle adoptions \\
+
+\section{Computer \\ Skills}          
+    Stata, R, Python, Java, Mathematica, ArcGIS/QGIS  \\
+
+\section{Published and Forthcoming}
+
+\begin{enumerate}
+\item  Chen, Victor L., Delmas, Magali A., Kaiser, William J., \& \textbf{Locke, Stephen L.}. (2015) ``\href{http://www.sciencedirect.com/science/article/pii/S0301421514006296}{What can we learn from high-frequency appliance-level energy metering? Results from a field experiment.}''  \emph{Energy Policy} 77: 164-175. %\textbf{cites: 43}
+\item \textbf{Locke, Stephen L.}, \& Blomquist, Glenn C. (2016). ``\href{http://le.uwpress.org/content/92/1/131.short}{The Cost of Convenience: Estimating the Impact of Communication Antennas on Residential Property Values.}'' \emph{Land Economics} 92(1):131-147.  %\textbf{cites: 9}
+\item Delmas, Magali A., Kahn, Matthew E., \& \textbf{Locke, Stephen L.} (2017) ``\href{http://www.sciencedirect.com/science/article/pii/S109094431630254X}{The Private and Social Consequences of Purchasing an Electric Vehicle and Solar Panels:  Evidence from California}.'' \emph{Research in Economics} 71(2): 225-235. %\textbf{cites: 20}
+\item Chen, Victor, L, Delmas, Magali, A. \textbf{Locke, Stephen L.}, \& Singh, Amarjeet. (2017) ``\href{https://www.sciencedirect.com/science/article/pii/S0140988317303079}{Information Strategies for Energy Conservation:  A Field Experiment in India}''. \emph{Energy Economics} 68: 215-227. %\textbf{cites: 19}
+\item \textbf{Locke, Stephen L.} (2019)``\href{https://onlinelibrary.wiley.com/doi/full/10.1111/coep.12404}{Estimating the Impact of Major League Baseball Games on Local Air Pollution}'' \emph{Contemporary Economic Policy} 37(2): 236-244. %\textbf{cites: 7}
+\item Goff, Brian \& \textbf{Locke, Stephen L.} (2019) ``\href{http://journals.sagepub.com/doi/10.1177/1527002518798686}{Revisiting Romer: Digging Deeper Into Influences on NFL Managerial Decisions}.'' \emph{Journal of Sports Economics} 20(5): 671-689. %\textbf{cites: 1}
+\item \textbf{Locke, Stephen L.} (2020) ``\href{https://doi.org/10.1007/s11146-019-09702-2}{Paying for a Name? Comparing the Performance of Franchised Real Estate Brokerage Firms}'' \emph{Journal of Real Estate Finance and Economics} 61(1): 115-128. %\textbf{cites: 1}
+\item \textbf{Locke, Stephen L.} (2024) ``\href{https://doi.org/10.1080/13504851.2024.2386149}{Household characteristics and electric vehicle adoption: changes from 2017 to 2022}'' \emph{Applied Economics Letters} . %
+\item \textbf{Locke, Stephen L}, Beck, Jason, \& Toma, Mark. (2024) ``\href{https://www.tandfonline.com/doi/full/10.1080/00036846.2024.2399816}{Crime Risk and Property Values: Evidence from Gunshot Incidents in Savannah}.'' \emph{Applied Economics}.
+\end{enumerate}
+
+\section{Working Papers}
+\begin{enumerate}
+
+
+%\item ``Texting Laws, Behavior Change, and Traffic Fatalities" (Submitted)
+%\item ``\href{http://www.anderson.ucla.edu/Documents/areas/ctr/ziman/2015-16WP.pdf}{Voting with your senses? The impact of local environmental conditions on preferences for environmental regulation.}'' With Magali Delmas (UCLA). UCLA Ziman Center for Real Estate Working Paper \# 2015-16. 
+\item ``Repeat Business in Residential Real Estate Brokerage'' 
+%\item ``Randomized Effects of Changing Enforcement: The American Hockey League 2005-2019.'' With Dennis Wilson (WKU).
+%\item ``Pricing Anomalies in Auction Estimates for Luxury Watches'' 
+%\item ``Valuing the Return of Blue-Blood NCAA Baskeball Programs'' With Dennis Wilson
+%\item ``A Comparison of Domestic and International Boxoffice Revenues'' With Brian Goff (WKU), Dennis Wilson (WKU), \& David Zimmer (WKU).
+\item ``Information Inaccuracy Equilibrium in Auctions" With Brendan Cunningham
+\item ``Stated and Revealed Preferences for Conservation of Species'' With Jacob Byl.
+\item ``Identifying the Impact of Attendance on Home Court Advantage'' With Emily Marshall and Jadrian Wooten. (\emph{under review})
+\item ``Air Quality and Worker Productivity: Evidence from Major League Baseball Pitcher Performance''
+\item ``Estimating the Impact of Taylor Swift Concerts on Local Air Quality'' With Susane Leguizamon. (\emph{submitted})
+\item ``Existence and Influences of Referee Bias in Professional Hockey'' With Dennis Wilson.
+\item ``The Impact of the Transfer Portal on College Basketball Player Movement, Team Rosters, and Competitive Balance'' With Craig Depken and Dennis Wilson.
+\end{enumerate}
+
+
+
+
+\section{Presentations}
+
+
+\textbf{Western Kentucky University}
+
+\medskip
+
+\begin{itemize}
+\item Kentucky Economic Association. Berea College. October 2023.
+\item Kentucky Economic Association. Northern Kentucky University. October 2022.
+\item Southern Economic Association. Ft. Lauderdale, FL. November 2022
+\item Southern Economic Association. Houston, TX. November 2021
+\item Southern Economic Association. Tampa, FL. November 2017
+\item Kentucky Economic Association. Bowling Green, KY. October 2017
+\item Southern Economic Association. Washington, D.C. November, 2016
+\item Kentucky Economic Association. Lexington, KY. October 2016
+\item Southern Economic Association /  Society for Benefit Cost Analysis. New Orleans, LA. November 21-23, 2015
+\item Kentucky Economic Association. Frankfort, KY. October 23, 2015
+\item Economics Workshop. Western Kentucky University. October 14, 2015
+\end{itemize}
+
+\textbf{University of California, Los Angeles}
+
+\medskip
+
+\begin{itemize}
+\item Society for Benefit Cost Analysis. Washington D.C. March 13-14, 2014.
+\item American Real Estate and Urban Economics Association / Allied Social Science Association. Philadelphia, PA. January 3-5, 2014.
+\end{itemize}
+
+\textbf{University of Kentucky}
+
+\medskip
+
+\begin{itemize}
+\item Southern Economic Association. New Orleans, LA. November 16-18, 2012.
+\item Economics Workshop. Western Kentucky University. September 28, 2012. 
+\item Kentucky Economic Association. Georgetown, KY. October 16, 2012.
+\item Kentucky Economic Association. Frankfort, KY.October 28, 2011.
+ \end{itemize}
+
+	
+\section{Service}
+
+\begin{tabular}{ll}
+Activity & Dates \\ \hline
+Director of Actuarial Science concentration & Summer 2023 -  \\
+GFCB Sabbatical Committee & Fall 2022 - \\
+WKU Ogen Scholarship Committee & Fall 2019 - \\
+WKU Fulbright Review & 2021 -  \\
+GFCB Core Curriculum Review committee & 2021 \\
+GFCB CAPE committee & 2019 \\
+Co-advisor, WKU Economics Club & Fall 2015 -  \\
+GFCB Research Excellence Committee & Spring 2016 - Spring 2018 \\
+& Fall 2022 - \\ 
+GFCB Scholarship Committee & Spring 2017 - Spring 2022 \\
+WKU Faculty Senate & Spring 2017 - Spring 2019 \\
+WKU Faculty Welfare and Professional Responsibilities & Fall 2017 - Spring 2019
+\end{tabular}
+
+
+	
+\section{Referee Experience}
+
+\emph{Resource and Energy Economics}; \emph{Contemporary Economic Policy}; \emph{Energy Economics}; \emph{Journal of  Benefit-Cost Analysis}; \emph{Journal of Real Estate Finance and Economics}; \emph{Regional Science and Urban Economics}; \emph{International Regional Science Review}; \emph{Journal of Applied Economics and Policy}; \emph{The European Journal of Health Economics}; \emph{Journal of Environmental Economics and Management}; \emph{Journal of Sports Economics}; \emph{The Professional Geographer}; \emph{Applied Economics}; \emph{Empirical Economics}
+
+\section{Professional Development}
+
+\begin{tabular}{ll}
+Society of Actuaries Actuarial Teaching Conference & July 2024 \\
+Bringing Free Market Environmenalism to the Urban Environment & November 3-5, 2016 \\
+University of Kentucky Economics Teaching Workshop & (2010-2013, 2016) 
+\end{tabular}
+
+\vspace{.2in}
+
+
+\section{Teaching Experience}
+
+
+\textbf{Western Kentucky University}
+
+\medskip
+
+\begin{tabular}{l}
+ECON 202: Principles of Microeconomics    \\ %    &  (13 sections) \\
+ECON 206: Statistics     \\ %& (4 sections)     \\ %\\
+ECON 302: Intermediate Microeconomics     \\ %& (1 section) \\ 
+ECON 307: Financial Data Modelling \\
+ECON 430: Environmental \& Resource Economics     \\ %& (3 sections) \\
+ECON 465: Regression \& Econometrics     \\ %& (10 sections) \\
+ECON 490: Practicum in Economics     \\ %& (1 section) \\
+ECON 497/499: Senior Assessment     \\ %& (2 sections) \\
+ECON 502: Applied Microeconomic Theory \\
+ECON 598: Independent Research/Environmental Economics     \\ %& (1 section)
+\end{tabular}
+
+\vspace{.2in}
+
+{\textbf{University of Kentucky}}
+
+\medskip
+
+\begin{tabular}{l}
+    ECO 391: Economics and Business Statistics   \\ %     &  (6 sections)\\
+    ECO 201: Introductory Microeconomics  \\ %     &   (3 sections)\\
+    B\&E 223: Introduction to the Economics of Business (MBA) % & (1 section) \\
+%\\
+% \bf{\emph{Teaching Assistant}}  &    \\
+% ECO 101: Contemporary Economic Issues      &     \\
+% ECO 201: Introductory Microeconomics      &     \\
+% ECO 202: Introductory Macroeconomics	& \\ 
+\end{tabular}
+
+\section{Honors and Awards}          
+\begin{tabular}{l l}
+    Award & Date \\ \hline
+	GFCB Summer Research Grant (\$10,000) & (2020) \\
+	Most Valuable Professor: Hilltopper Basketball & (2019) \\
+	GFCB Summer Research Grant (\$10,000) & (2019) \\
+	GFCB Teaching Award  & (2018) \\
+	GFCB Summer Research Grant (\$10,000) & (2018) \\
+	Dean's merit Award: Department of Economics & (2017) \\
+	GFCB Summer Research Grant (\$10,000) & (2017) \\
+	GFCB Summer Research Grant (\$5,000) & (2016) \\
+	Faculty Appreciation Award, Sigma Alpha Epsilon fraternity & (2016) \\
+	UCLA Gilbert Foundation Real Estate Research Award (\$2,500) & (2014, 2015) \\
+	Kentucky Opportunity Fellowship & (2012-2013) \\
+	Outstanding Teaching Award for Teaching Assistants in Economics & (2012)
+\end{tabular}
+
+   
+\section{Professional Affiliations (past and current)} 
+ Association of Environmental and Resource Economists \\     
+ American Real Estate and Urban Economics Association \\   
+ American Economic Association \\
+ Kentucky Economic Association \\
+ Southern Economic Association \\
+ Society for Benefit-Cost Analysis
+
+\vspace{.2in}
+
+\end{document}
+
+
+\section{References}
+
+\begin{tabular}{ll}
+\begin{tabular}{l}
+\href{http://www.environment.ucla.edu/delmas/}{Magali Delmas}  \\
+UCLA Institute of the Environment \\ 
+La Kretz Hall, Suite 300 \\
+Box 951496 \\
+Los Angeles, CA 90095-1496 \\
+310.825.9310 \\
+\email{delmas@ucla.edu}
+\end{tabular}
+
+& 
+
+\begin{tabular}{l}
+\href{http://www.environment.ucla.edu/people/matthew-kahn.php}{Matthew Kahn}  \\
+UCLA Institute of the Environment \\ 
+La Kretz Hall, Suite 300 \\
+Box 951496 \\
+Los Angeles, CA 90095-1496 \\
+310.794.4904 \\
+\email{mkahn@ioes.ucla.edu}
+\end{tabular}
+\end{tabular}
+
+\vspace{.25in}
+
+\begin{tabular}{ll} 
+\begin{tabular}{l}
+\href{http://gatton.uky.edu/faculty/blomquist/index.html}{Glenn Blomquist} \\ 
+Department of Economics \\
+Gatton Business \& Economics, 335 \\
+Lexington, KY 40506-0034 \\
+859.257.3924     \\
+\email{gcblom@uky.edu} \\
+\end{tabular}
+
+
+&
+
+\begin{tabular}{l}
+\href{http://gatton.uky.edu/Content.asp?PageName=FRIndProfile&ID=47}{J. Robert Gillette}  \\
+Department of Economics   \\ 
+Gatton Business \& Economics, 335 \\
+Lexington, KY 40506-0034 \\
+859.257.1411     \\
+\email{jrgill01@uky.edu} 
+\end{tabular}
+\end{tabular}
+
+
+
+
+
+
+
+
+
+
+\begin{tabular}{ll} 
+\begin{tabular}{l}
+\href{http://gatton.uky.edu/Content.asp?PageName=FRIndProfile&ID=55&DeptID=}{Aaron Yelowitz}  \\
+Department of Economics   \\ 
+Gatton Business \& Economics, 335 \\
+Lexington, KY 40506-0034 \\
+859.257.7634         \\
+\email{aaron@uky.edu}
+\end{tabular}
+
+\begin{tabular}{l}
+\href{http://gatton.uky.edu/Content.asp?PageName=FRIndProfile&ID=74}{Frank Scott} \\
+Department of Economics \\
+Gatton Business \& Economics, 335 \\
+Lexington, KY 40506-0034 \\
+859.257.7643 \\
+\email{fscott@uky.edu} \\
+\end{tabular}
+\end{tabular}
+
+
+
+\end{tabular}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% End CV Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------%
+% The following is copyright and licensing information for
+% redistribution of this LaTeX source code; it also includes a liability
+% statement. If this source code is not being redistributed to others,
+% it may be omitted. It has no effect on the function of the above code.
+%----------------------------------------------------------------------%
+% Copyright (c) 2007, 2008, 2009, 2010, 2011 by Theodore P. Pavlic
+%
+% Unless otherwise expressly stated, this work is licensed under the
+% Creative Commons Attribution-Noncommercial 3.0 United States License. To
+% view a copy of this license, visit
+% http://creativecommons.org/licenses/by-nc/3.0/us/ or send a letter to
+% Creative Commons, 171 Second Street, Suite 300, San Francisco,
+% California, 94105, USA.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+% OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+% IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+% CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+% TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+% SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%----------------------------------------------------------------------%
